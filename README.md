@@ -1,3 +1,9 @@
+# This Fork
+I currently only plan on merging bug fixes made be the community. There won't be any significantly new functionality.
+
+## Integration so Far & Credits
+@[pepijndevos](https://github.com/pepijndevos/peerjs) - [Mention the correct default port](https://github.com/peers/peerjs/pull/272/commits/03a5b02da69e43bde34082f0eb96696bd54fc1ea)
+
 # PeerJS: Simple peer-to-peer with WebRTC #
 
 PeerJS provides a complete, configurable, and easy-to-use peer-to-peer API built on top of WebRTC, supporting both data channels and media streams.
