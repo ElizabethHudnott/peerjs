@@ -77,6 +77,10 @@ DataConnection.prototype._configureDataChannel = function() {
     self.open = true;
     self.emit('open');
   }
+  this._dc.onbufferedamountlow = function() {
+      self._buffering = false;
+      self._tryBuffer(); 
+  }
 
   // Use the Reliable shim for non Firefox browsers
   if (!util.supports.sctp && this.reliable) {
@@ -219,13 +223,6 @@ DataConnection.prototype._trySend = function(msg) {
     this._dc.send(msg);
   } catch (e) {
     this._buffering = true;
-
-    var self = this;
-    setTimeout(function() {
-      // Try again.
-      self._buffering = false;
-      self._tryBuffer();
-    }, 100);
     return false;
   }
   return true;
