@@ -1,9 +1,6 @@
 # This Fork
 I currently only plan on merging bug fixes made be the community. There won't be any significantly new functionality.
 
-## Integration so Far & Credits
-@[pepijndevos](https://github.com/pepijndevos/peerjs) - [Mention the correct default port](https://github.com/peers/peerjs/pull/272/commits/03a5b02da69e43bde34082f0eb96696bd54fc1ea)
-
 # PeerJS: Simple peer-to-peer with WebRTC #
 
 PeerJS provides a complete, configurable, and easy-to-use peer-to-peer API built on top of WebRTC, supporting both data channels and media streams.
@@ -15,9 +12,17 @@ PeerJS provides a complete, configurable, and easy-to-use peer-to-peer API built
 
 **Include the library**
 
+  from the cdn:
 ```html
-<script src="http://cdn.peerjs.com/0.3/peer.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/peerjs/0.3.14/peer.js"></script>
 ```
+  with modules:
+`npm install peerjs` or `yarn add peerjs`
+    and the usage:
+  ```js
+  import Peer from 'peerjs';
+  ```
+
 
 **Create a Peer**  
 Get a [free API key](http://peerjs.com/peerserver). Your id only needs to be unique to the namespace of your API key.
@@ -84,6 +89,7 @@ peer.on('call', function(call) {
 
 ### [Changelog](https://github.com/peers/peerjs/blob/master/changelog.md)
 
-##License
+## License
+
 PeerJS is licensed under the [MIT License](https://tldrlegal.com/l/mit).
 

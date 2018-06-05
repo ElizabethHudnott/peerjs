@@ -405,13 +405,14 @@ Negotiator._idPrefix = 'pc_';
 Negotiator.startConnection = function(connection, options) {
   var pc = Negotiator._getPeerConnection(connection, options);
 
+  // Set the connection's PC.
+  connection.pc = connection.peerConnection = pc;
+
   if (connection.type === 'media' && options._stream) {
     // Add the stream.
     pc.addStream(options._stream);
   }
 
-  // Set the connection's PC.
-  connection.pc = connection.peerConnection = pc;
   // What do we need to do now?
   if (options.originator) {
     if (connection.type === 'data') {
@@ -592,7 +593,7 @@ Negotiator.cleanup = function(connection) {
 
   var pc = connection.pc;
 
-  if (!!pc && (pc.readyState !== 'closed' || pc.signalingState !== 'closed')) {
+  if (!!pc && ((pc.readyState && pc.readyState !== 'closed') || pc.signalingState !== 'closed')) {
     pc.close();
     connection.pc = null;
   }
@@ -805,7 +806,7 @@ util.inherits(Peer, EventEmitter);
 // websockets.)
 Peer.prototype._initializeServerConnection = function() {
   var self = this;
-  this.socket = new Socket(this.options.secure, this.options.host, this.options.port, this.options.path, this.options.key);
+  this.socket = new Socket(this.options.secure, this.options.host, this.options.port, this.options.path, this.options.key, this.options.wsport);
   this.socket.on('message', function(data) {
     self._handleMessage(data);
   });
@@ -1203,8 +1204,10 @@ var EventEmitter = require('eventemitter3');
  * An abstraction on top of WebSockets and XHR streaming to provide fastest
  * possible connection for peers.
  */
-function Socket(secure, host, port, path, key) {
-  if (!(this instanceof Socket)) return new Socket(secure, host, port, path, key);
+function Socket(secure, host, port, path, key, wsport) {
+  if (!(this instanceof Socket)) return new Socket(secure, host, port, path, key, wsport);
+
+  wsport = wsport || port;
 
   EventEmitter.call(this);
 
@@ -1215,7 +1218,7 @@ function Socket(secure, host, port, path, key) {
   var httpProtocol = secure ? 'https://' : 'http://';
   var wsProtocol = secure ? 'wss://' : 'ws://';
   this._httpUrl = httpProtocol + host + ':' + port + path + key;
-  this._wsUrl = wsProtocol + host + ':' + port + path + 'peerjs?key=' + key;
+  this._wsUrl = wsProtocol + host + ':' + wsport + path + 'peerjs?key=' + key;
 }
 
 util.inherits(Socket, EventEmitter);
@@ -1507,7 +1510,7 @@ var util = {
 
     var binaryBlob = false;
     var sctp = false;
-    var onnegotiationneeded = !!window.webkitRTCPeerConnection;
+    var onnegotiationneeded = false;
 
     var pc, dc;
     try {
@@ -1552,6 +1555,7 @@ var util = {
 
     // FIXME: this is not great because in theory it doesn't work for
     // av-only browsers (?).
+    /*
     if (!onnegotiationneeded && data) {
       // sync default check.
       var negotiationPC = new RTCPeerConnection(defaultConfig, {optional: [{RtpDataChannels: true}]});
@@ -1568,6 +1572,7 @@ var util = {
         negotiationPC.close();
       }, 1000);
     }
+    */
 
     if (pc) {
       pc.close();
